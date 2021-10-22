@@ -1,0 +1,25 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <title>Rejestracja</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet" crossorigin="anonymous">
+</head>
+
+<body>
+<div class="container">
+    <h2 class="form-signin-heading" style="text-align: center;">Zarejestruj się</h2>
+
+    <form class="form-signin" method="get" action="/signup/student">
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Jako student</button>
+    </form>
+
+    <form class="form-signin" method="get" action="/signup/lecturer">
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Jako wykładowca</button>
+    </form>
+</div>
+</body>
+</html>

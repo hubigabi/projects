@@ -1,0 +1,9 @@
+apiVersion: v2
+name: project-api-rest
+description: Project management web application
+
+type: application
+
+version: 0.1.2
+
+appVersion: "0.0.1-SNAPSHOT"

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8"/>
+    <title>Lista projektów studenta</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+        body {
+            padding-top: 5rem;
+            padding-bottom: 5rem;
+        }
+    </style>
+
+    <link rel="stylesheet" type="text/css" th:href="@{/scripts/dt/datatables.css}"/>
+</head>
+<body>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" href="#">Zarządzanie projektami</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+            aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/projects}">Projekty</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/students}">Studenci</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/auth/logout}">Wyloguj się</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<main role="main" class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Student</h2>
+            <br/>
+            <table class="table">
+                <tr>
+                    <th>ID studenta</th>
+                    <td th:text="${student.ID}"></td>
+                </tr>
+                <tr>
+                    <th>Nazwisko i imię</th>
+                    <td th:text="|${student.lastName} ${student.firstName}|"></td>
+                </tr>
+                <tr>
+                    <th>Numer indeksu</th>
+                    <td th:text="${student.indexNumber}"></td>
+                </tr>
+                <tr>
+                    <th>Typ</th>
+                    <td th:text="${student.fullTime ? 'stacjonarny' : 'zaoczny'}"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <h2>
+                Lista projektów
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNewModal"
+                        style="float: right">
+                    Przypisz nowy
+                </button>
+            </h2>
+            <br/>
+            <table class="table" id="mainTable">
+                <thead>
+                <tr>
+                    <th>Lp.</th>
+                    <th>ID</th>
+                    <th>Nazwa</th>
+                    <th>Opis</th>
+                    <th>Utworzony</th>
+                    <th>Data obrony</th>
+                    <th sec:authorize="${hasAuthority('ADMIN')}" class="actions_column">Akcje</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="project : ${projects}">
+                    <td th:text="${projectStat.index + 1} + '.'"></td>
+                    <td th:text="${project.ID}"></td>
+                    <td th:text="${project.name}"></td>
+                    <td th:text="${project.description}"></td>
+                    <td th:text="${#temporals.format(project.creationDateTime, 'yyyy-MM-dd hh:mm:ss')}"></td>
+                    <td th:text="${#temporals.format(project.deliveryDate, 'yyyy-MM-dd')}"></td>
+                    <td sec:authorize="${hasAuthority('ADMIN')}">
+                        <form th:action="@{/students/projects}" method="post">
+                            <input type="hidden" name="action" value="remove"/>
+                            <input type="hidden" name="studentId" th:value="${student.ID}" />
+                            <input type="hidden" name="projectId" th:value='${project.ID}'/>
+                            <button class="btn btn-secondary" type="submit">Wypisz</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+<div class="modal fade" id="addNewModal" tabindex="-1" role="dialog" aria-labelledby="addNewLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addNewLabel">Przypisz studenta</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form th:action="@{/students/projects}" method="post">
+                <input type="hidden" name="action" value="add"/>
+                <input type="hidden" name="studentId" th:value="${student.ID}" />
+                <div class="modal-body">
+                    <select class="form-select" name="projectId">
+                        <option selected disabled hidden>Wybierz projekt</option>
+                        <option th:each="project : ${remainingProjects}" th:value="${project.ID}" th:text="${project.name}"></option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
+                    <button type="submit" class="btn btn-primary">Zapisz</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+<script type="application/javascript"
+        th:src="@{/scripts/dt/datatables.js}"></script>
+<script type="application/javascript"
+        th:src="@{/scripts/datatables.js}"></script>
+</body>
+</html>
