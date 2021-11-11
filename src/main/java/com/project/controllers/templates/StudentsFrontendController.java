@@ -11,11 +11,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/students")
+@RolesAllowed("ROLE_ADMIN")
 public class StudentsFrontendController {
     private StudentsService studentsService;
     private ProjectsService projectsService;

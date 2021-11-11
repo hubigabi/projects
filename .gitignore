@@ -142,5 +142,3 @@ target/
 
 *.mv.db
 *.trace.db
-
-src/main/resources/application.properties

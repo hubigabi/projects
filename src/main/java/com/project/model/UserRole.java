@@ -11,13 +11,15 @@ public enum UserRole {
     STUDENT("Student", "USER"),
     LECTURER("Prowadzący zajęcia", "USER", "ADMIN");
 
-    @Getter String friendlyName;
-    @Getter List<SimpleGrantedAuthority> authorities;
+    @Getter
+    String friendlyName;
+    @Getter
+    List<SimpleGrantedAuthority> authorities;
 
     UserRole(String friendlyName, String... authorities) {
         this.friendlyName = friendlyName;
         this.authorities = Arrays.stream(authorities)
-                .map(SimpleGrantedAuthority::new)
+                .map(s -> new SimpleGrantedAuthority("ROLE_" + s))
                 .collect(Collectors.toList());
     }
 }
