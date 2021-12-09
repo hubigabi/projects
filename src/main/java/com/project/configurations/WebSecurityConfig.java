@@ -88,5 +88,4 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
     AccessDeniedHandler accessDeniedHandler() {
         return new FrontendAccessDeniedHandler();
     }
-
 }

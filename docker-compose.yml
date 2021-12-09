@@ -9,6 +9,21 @@ services:
       POSTGRES_DB: keycloak
       POSTGRES_USER: keycloak
       POSTGRES_PASSWORD: password
+  openldap:
+    image: docker.io/bitnami/openldap:2.5
+    ports:
+      - '1389:1389'
+      - '1636:1636'
+    environment:
+      - LDAP_ADMIN_USERNAME=admin
+      - LDAP_ADMIN_PASSWORD=admin
+      - LDAP_USERS=student01,student02,lecturer01,lecturer02
+      - LDAP_PASSWORDS=user,user,user,user
+      - LDAP_CONFIG_ADMIN_ENABLED=true
+      - LDAP_CONFIG_ADMIN_USERNAME=admin
+      - LDAP_CONFIG_ADMIN_PASSWORD=admin
+    volumes:
+      - 'openldap_data:/bitnami/openldap'
   keycloak:
     image: quay.io/keycloak/keycloak:latest
     environment:
@@ -21,10 +36,12 @@ services:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin
     ports:
-      - 8080:8080
+      - '8080:8080'
     depends_on:
       - postgres
-
+      - openldap
 volumes:
   postgres_data:
+    driver: local
+  openldap_data:
     driver: local

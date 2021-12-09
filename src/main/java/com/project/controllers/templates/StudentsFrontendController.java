@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/students")
-@RolesAllowed("ROLE_ADMIN")
+@RolesAllowed("lecturers")
 public class StudentsFrontendController {
     private StudentsService studentsService;
     private ProjectsService projectsService;

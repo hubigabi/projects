@@ -12,7 +12,7 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD})
 @Documented
 @Inherited
-@PreAuthorize("hasAuthority('ADMIN')")
+@PreAuthorize("hasAnyRole('lecturers', 'ROLE_lecturers')")
 public @interface AllowOnlyLecturer {
     Class<?>[] exclude() default {};
 }
