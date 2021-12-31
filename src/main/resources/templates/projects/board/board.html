@@ -58,7 +58,8 @@
     </div>
 
     <div class="row" style="padding-top: 20px">
-        <div class="col draggable-column-elements" th:each="taskStatus : ${T(com.project.model.TaskStatus).values()}">
+        <div class="col draggable-column-elements" th:each="taskStatus : ${T(com.project.model.TaskStatus).values()}"
+             style="border: 1px solid #B0B0B0; border-radius: 10px; padding: 25px 10px; margin: 0 8px">
             <h5 class="no-draggable-element" th:text="${taskStatus.friendlyName}" style="text-align: center;"></h5>
 
             <div class="card" th:each="task : ${tasks}" th:if="${task.taskStatus == taskStatus}"
