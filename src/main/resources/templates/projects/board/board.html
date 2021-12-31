@@ -47,122 +47,34 @@
     <div class="row">
         <div class="col">
             <div style="float: left">
-                <h2>Projekt</h2>
+                <h2>Tablica projektu</h2>
             </div>
 
-            <a th:href="@{/projects/board (projectId=${project.ID})}">
+            <a th:href="@{/projects/tasks (projectId=${project.ID})}">
                 <button type="button" class="btn btn-primary" style="float: right">
-                    Tablica projektu
+                    Szczegóły projektu
                 </button>
             </a>
-
-            <table class="table">
-                <tr>
-                    <th>ID projektu</th>
-                    <td th:text="${project.ID}"></td>
-                </tr>
-                <tr>
-                    <th>Nazwa projektu</th>
-                    <td th:text="${project.name}"></td>
-                </tr>
-                <tr>
-                    <th>Opis projektu</th>
-                    <td th:text="${project.description}"></td>
-                </tr>
-                <tr>
-                    <th>Studenci</th>
-                    <td>
-                        <p th:each="student: ${project.students}"
-                           th:text="|${student.lastName} ${student.firstName} (${student.indexNumber})|"
-                           style="margin-bottom: 0"></p>
-                    </td>
-                </tr>
-            </table>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col">
-            <h2>
-                Lista zadań
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNewModal"
-                        style="float: right">
-                    Dodaj nowe zadanie
-                </button>
-            </h2>
-            <br/>
-            <table class="table" id="mainTable">
-                <thead>
-                <tr>
-                    <th>Lp.</th>
-                    <th>ID</th>
-                    <th>Nazwa</th>
-                    <th>Opis</th>
-                    <th>Utworzony</th>
-                    <th>Status</th>
-                    <th class="actions_column">Akcje</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="task : ${tasks}">
-                    <td th:text="${taskStat.index + 1} + '.'"></td>
-                    <td th:text="${task.ID}"></td>
-                    <td th:text="${task.name}"></td>
-                    <td th:text="${task.description}"></td>
-                    <td th:text="${#temporals.format(task.additionDateTime, 'yyyy-MM-dd hh:mm:ss')}"></td>
-                    <th><span th:class="|badge badge-${task.taskStatus.getBadgeClass()}|"
-                              th:text="${task.taskStatus.getFriendlyName()}"></span></th>
-                    <td>
-                        <a th:href="@{/projects/tasks/edit (taskId=${task.ID}, projectId=${project.ID})}">Edycja</a><br/>
-                        <a th:href="@{/projects/tasks/delete (taskId=${task.ID}, projectId=${project.ID})}">Usuń</a>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+    <div class="row" style="padding-top: 20px">
+        <div class="col" th:each="taskStatus : ${T(com.project.model.TaskStatus).values()}">
+            <h5 th:text="${taskStatus.friendlyName}" style="text-align: center;"></h5>
+
+            <div class="card" th:each="task : ${tasks}" th:if="${task.taskStatus == taskStatus}"
+                 style="margin-top: 20px;">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${task.name}"></h5>
+                    <h6 class="card-subtitle mb-2 text-muted"
+                        th:text="${#temporals.format(task.additionDateTime, 'dd-MM-yyyy')}"></h6>
+                    <p class="card-text" th:text="${task.description}" style="text-align: justify;"></p>
+                    <a href="#" class="card-link">Zadanie</a>
+                </div>
+            </div>
         </div>
     </div>
 </main>
-<div class="modal fade" id="addNewModal" tabindex="-1" role="dialog" aria-labelledby="addNewLabel"
-     aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addNewLabel">Nowe zadanie</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form th:action="@{/projects/tasks}" method="post">
-                <input type="hidden" name="projectId" th:value="${project.ID}"/>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="taskTitle">Nazwa</label>
-                        <input type="text" class="form-control" id="taskTitle" name="taskTitle"
-                               placeholder="Nazwa" maxlength="35" required/>
-                    </div>
-                    <div class="form-group">
-                        <label for="taskDescription">Opis</label>
-                        <textarea maxlength="1000" class="form-control" id="taskDescription" name="taskDescription"
-                                  placeholder="Opis..." required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="taskStatus">Status</label>
-                        <select class="selectpicker form-control" id="taskStatus" name="taskStatus">
-                            <option th:each="status : ${T(com.project.model.TaskStatus).values()}"
-                                    th:value="${status}"
-                                    th:data-content="'<span class=\'badge badge-' + ${status.getBadgeClass()} + '\'>' + ${status.getFriendlyName()} + '</span>'"
-                                    th:text="${status.getFriendlyName()}"></option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
-                    <button type="submit" class="btn btn-primary">Zapisz</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 <div id="Smallchat">
     <div class="Layout Layout-open Layout-expand Layout-right"
          style="background-color: #3F51B5;color: rgb(255, 255, 255);opacity: 5;border-radius: 10px;">

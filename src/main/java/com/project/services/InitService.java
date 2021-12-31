@@ -99,6 +99,7 @@ public class InitService {
             for (int k = 0; k < tasksInProject; k++) {
                 String taskName = lorem.getTitle(2, 4);
                 String taskDescription = lorem.getWords(10, 20);
+                taskDescription = taskDescription.substring(0, 1).toUpperCase() + taskDescription.substring(1);
                 TaskStatus taskStatus = TaskStatus.values()[ThreadLocalRandom.current().nextInt(TaskStatus.values().length)];
 
                 Task t = new Task(taskName, taskDescription, taskStatus);

@@ -70,7 +70,9 @@
                     <td th:text="${#temporals.format(project.deliveryDate, 'yyyy-MM-dd')}"></td>
                     <td>
                         <span sec:authorize="${hasAuthority('ADMIN')}"><a th:href="@{/projects/edit (projectId=${project.ID})}">Edycja</a><br/></span>
-                        <a th:href="@{/projects/tasks (projectId=${project.ID})}">Zadania i czat</a><span sec:authorize="${hasAuthority('ADMIN')}"><br/>
+                        <a th:href="@{/projects/tasks (projectId=${project.ID})}">Zadania</a>
+                        <a th:href="@{/projects/board (projectId=${project.ID})}">Tablica</a>
+                        <span sec:authorize="${hasAuthority('ADMIN')}"><br/>
                         <a th:href="@{/projects/delete (projectId=${project.ID})}">Usuń</a></span>
                     </td>
                 </tr>
