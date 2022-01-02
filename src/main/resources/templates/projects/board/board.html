@@ -10,6 +10,7 @@
           href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/css/bootstrap-select.min.css"
           integrity="sha512-ARJR74swou2y0Q2V9k0GbzQ/5vJ2RBSoCWokg4zkfM29Fb3vZEQyv0iWBMW/yvKgyHSR/7D64pFMmU8nYmbRkg=="
           crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.css" rel="stylesheet"/>
     <style>
         body {
             padding-top: 5rem;
@@ -59,17 +60,20 @@
 
     <div class="row" style="padding-top: 20px">
         <div class="col draggable-column-elements" th:each="taskStatus : ${T(com.project.model.TaskStatus).values()}"
-             style="border: 1px solid #B0B0B0; border-radius: 10px; padding: 25px 10px; margin: 0 8px">
+             th:id="'column-' + ${taskStatus}"
+             style="border: 2px solid #B0B0B0; border-radius: 10px; padding: 25px 10px; margin: 0 8px 30px 8px">
             <h5 class="no-draggable-element" th:text="${taskStatus.friendlyName}" style="text-align: center;"></h5>
 
             <div class="card" th:each="task : ${tasks}" th:if="${task.taskStatus == taskStatus}"
+                 th:id="'task-' + ${task.ID}"
                  style="margin-top: 20px;">
                 <div class="card-body">
                     <h5 class="card-title" th:text="${task.name}"></h5>
                     <h6 class="card-subtitle mb-2 text-muted"
                         th:text="${#temporals.format(task.additionDateTime, 'dd-MM-yyyy')}"></h6>
                     <p class="card-text" th:text="${task.description}" style="text-align: justify;"></p>
-                    <a href="#" class="card-link">Zadanie</a>
+                    <a th:href="@{/projects/tasks/edit (projectId=${project.ID},taskId=${task.ID})}"
+                       class="card-link">Zadanie</a>
                 </div>
             </div>
         </div>
@@ -127,6 +131,7 @@
         crossorigin="anonymous"
         referrerpolicy="no-referrer"></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js'></script>
 <script type="application/javascript"
         th:src="@{/scripts/dt/datatables.js}"></script>
 <script type="application/javascript"
@@ -135,15 +140,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 <script type="application/javascript"
         th:src="@{/scripts/chat.js}"></script>
-<script>
-    dragula(Array.from((document.querySelectorAll('.draggable-column-elements'))), {
-        moves: (el, source, handle, sibling) => !el.classList.contains('no-draggable-element'),
-        revertOnSpill: true
-    })
-        .on('drop', (el, target, source, sibling) => {
-            console.log(target);
-            console.log(el);
-        });
-</script>
+<script type="application/javascript"
+        th:src="@{/scripts/board.js}"></script>
 </body>
 </html>

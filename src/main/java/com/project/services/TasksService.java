@@ -1,10 +1,13 @@
 package com.project.services;
 
 import com.project.model.Task;
+import com.project.model.dto.ChangeTaskStatusRequest;
+import com.project.model.dto.ChangeTaskStatusResponse;
 import com.project.repositories.TasksRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -56,5 +59,25 @@ public class TasksService {
         if (existsById(id)) {
             tasksRepository.deleteById(id);
         }
+    }
+
+    @Transactional
+    public Optional<ChangeTaskStatusResponse> changeTaskStatus(ChangeTaskStatusRequest changeTaskStatusRequest) {
+        return tasksRepository.findById(changeTaskStatusRequest.getId())
+                .map(task -> {
+                    task.setTaskStatus(changeTaskStatusRequest.getTaskStatus());
+                    task = tasksRepository.save(task);
+                    return mapToChangeTaskStatusResponse(task);
+                });
+    }
+
+    private ChangeTaskStatusResponse mapToChangeTaskStatusResponse(Task task) {
+        ChangeTaskStatusResponse response = new ChangeTaskStatusResponse();
+        response.setId(task.getID());
+        response.setName(task.getName());
+        response.setDescription(task.getDescription());
+        response.setTaskStatus(task.getTaskStatus());
+        response.setAdditionDateTime(task.getAdditionDateTime());
+        return response;
     }
 }

@@ -34,14 +34,11 @@ public class ChatMessagesWSController {
     }
 
     private final ChatMessagesService chatMessagesService;
-    private final UsersService usersService;
     private final ProjectsService projectsService;
 
     @Autowired
-    public ChatMessagesWSController(ChatMessagesService chatMessagesService, UsersService usersService,
-                                    ProjectsService projectsService) {
+    public ChatMessagesWSController(ChatMessagesService chatMessagesService, ProjectsService projectsService) {
         this.chatMessagesService = chatMessagesService;
-        this.usersService = usersService;
         this.projectsService = projectsService;
     }
 
