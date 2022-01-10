@@ -61,6 +61,10 @@ public class TasksService {
         }
     }
 
+    public void saveAll(Iterable<Task> tasks) {
+        tasksRepository.saveAll(tasks);
+    }
+
     @Transactional
     public Optional<ChangeTaskStatusResponse> changeTaskStatus(ChangeTaskStatusRequest changeTaskStatusRequest) {
         return tasksRepository.findById(changeTaskStatusRequest.getId())
@@ -80,4 +84,5 @@ public class TasksService {
         response.setAdditionDateTime(task.getAdditionDateTime());
         return response;
     }
+
 }

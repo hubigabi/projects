@@ -9,6 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceUnit;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -24,6 +28,9 @@ public class InitService {
     private final StudentsService studentsService;
     private final LecturersService lecturersService;
     private final ChatMessagesService chatMessagesService;
+
+    @PersistenceUnit
+    private EntityManagerFactory entityManagerFactory;
 
     @Autowired
     public InitService(ProjectsService projectsService, TasksService tasksService,
@@ -125,10 +132,20 @@ public class InitService {
                 chatMessage.setUser(getRandomSetElement(studentsInProjectSet));
                 chatMessagesService.create(chatMessage);
             }
-
         }
 
+        updateRevInfo();
         log.info("Finished initializing data");
+    }
+
+    private void updateRevInfo() {
+        EntityManager em = entityManagerFactory.createEntityManager();
+        EntityTransaction transaction = em.getTransaction();
+        transaction.begin();
+        em.createNativeQuery("UPDATE REVINFO SET REVTSTMP = REVTSTMP - rand() * 1000 * 60 * 60 * 24 * :days")
+                .setParameter("days", 14)
+                .executeUpdate();
+        transaction.commit();
     }
 
     static <E> E getRandomSetElement(Set<E> set) {

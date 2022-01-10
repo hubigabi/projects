@@ -42,6 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/users/**",
                         "/api/students/**",
                         "/api/lecturers/**",
+                        "/api/stats/**",
                         "/api/chat-messages/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
