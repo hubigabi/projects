@@ -12,5 +12,5 @@ import java.util.List;
 @NoArgsConstructor
 public class ProjectStats {
     private List<LocalDate> days;
-    private List<FinishedTaskStatus> finishedTaskStatusList;
+    private List<FinishedTaskStatus> finishedTaskStatuses;
 }

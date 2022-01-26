@@ -7,8 +7,8 @@ import lombok.Getter;
 public enum TaskStatus {
     TO_DO("Do zrobienia", "secondary", true, 1),
     IN_PROGRESS("W trakcie", "primary", true, 2),
-    ON_HOLD("Wstrzymano", "warning", false, 0),
-    COMPLETED("Ukończono", "success", true, 3);
+    ON_HOLD("Wstrzymano", "warning", false, 3),
+    COMPLETED("Ukończono", "success", true, 4);
 
     @Getter
     String friendlyName;
@@ -17,5 +17,5 @@ public enum TaskStatus {
     @Getter
     boolean inStats;
     @Getter
-    int orderInStats;
+    int order;
 }

@@ -60,20 +60,18 @@ public class ProjectStatsService {
         private LocalDate startLocalDate;
     }
 
-    public ProjectStats getProjectStats(@PathVariable long projectId) {
+    public ProjectStats getProjectStats(long projectId) {
         List<Long> tasksIdInProject = tasksRepository.findAllByProjectID(projectId).stream()
                 .map(Task::getID)
                 .collect(Collectors.toList());
 
-        List<TaskStatus> taskStatusesInStats = Arrays.stream(TaskStatus.values())
-                .filter(TaskStatus::isInStats)
-                .sorted(Comparator.comparingInt(TaskStatus::getOrderInStats).reversed())
+        List<TaskStatus> taskStatuses = Arrays.stream(TaskStatus.values())
+                .sorted(Comparator.comparingInt(TaskStatus::getOrder).reversed())
                 .collect(Collectors.toList());
 
         AuditQuery query = auditReader.createQuery()
                 .forRevisionsOfEntity(Task.class, false, false)
-                .add(AuditEntity.id().in(tasksIdInProject))
-                .add(AuditEntity.property("taskStatus").in(taskStatusesInStats));
+                .add(AuditEntity.id().in(tasksIdInProject));
         List<Object[]> resultList = query.getResultList();
 
         Map<Long, List<TaskRevision>> taskRevisionMap = resultList.stream()
@@ -87,7 +85,7 @@ public class ProjectStatsService {
             taskRevisions = getOnlyNotOutdatedTaskRevisions(taskRevisions);
 
             Optional<LocalDate> taskStatusStartDate = Optional.empty();
-            for (TaskStatus taskStatus : taskStatusesInStats) {
+            for (TaskStatus taskStatus : taskStatuses) {
                 OptionalLong currentTaskStatusStartTimestamp = taskRevisions.stream()
                         .filter(taskRevision -> taskRevision.getTaskStatus() == taskStatus)
                         .mapToLong(TaskRevision::getTimestamp)
@@ -109,13 +107,14 @@ public class ProjectStatsService {
                 .min(LocalDate::compareTo)
                 .orElse(LocalDate.now());
 
+        taskStatusStartDateList.removeIf(taskStatusStartDate -> !taskStatusStartDate.getTaskStatus().isInStats());
         Map<TaskStatus, List<TaskStatusStartDate>> taskStatusStartMap = taskStatusStartDateList.stream().
                 collect(groupingBy(TaskStatusStartDate::getTaskStatus));
 
         ProjectStats projectStats = new ProjectStats();
         projectStats.setDays(firstProjectStatsDay.datesUntil(LocalDate.now().plusDays(1), Period.ofDays(1))
                 .collect(Collectors.toList()));
-        projectStats.setFinishedTaskStatusList(new ArrayList<>());
+        projectStats.setFinishedTaskStatuses(new ArrayList<>());
         for (var entry : taskStatusStartMap.entrySet()) {
             FinishedTaskStatus finishedTaskStatus = new FinishedTaskStatus();
             finishedTaskStatus.setTaskStatus(entry.getKey());
@@ -132,14 +131,17 @@ public class ProjectStatsService {
 
                 finishedTaskStatus.getFinishedTaskStatus().add(finishedTaskStatusCounter);
             }
-            projectStats.getFinishedTaskStatusList().add(finishedTaskStatus);
+            projectStats.getFinishedTaskStatuses().add(finishedTaskStatus);
         }
+        fillProjectStatsWithRemainingTaskStatuses(projectStats);
+        projectStats.getFinishedTaskStatuses()
+                .sort(Comparator.comparingInt(finishedTaskStatus -> finishedTaskStatus.getTaskStatus().getOrder()));
 
         return projectStats;
     }
 
     private ArrayList<TaskRevision> getOnlyNotOutdatedTaskRevisions(List<TaskRevision> outdatedTaskRevisions) {
-        outdatedTaskRevisions.sort(Comparator.comparingInt(value -> value.getTaskStatus().getOrderInStats()));
+        outdatedTaskRevisions.sort(Comparator.comparingInt(value -> value.getTaskStatus().getOrder()));
         ArrayList<TaskRevision> actualTaskRevisions = new ArrayList<>();
         while (outdatedTaskRevisions.size() > 0) {
             TaskRevision mostRecentTaskRevision = outdatedTaskRevisions.stream()
@@ -151,6 +153,27 @@ public class ProjectStatsService {
             actualTaskRevisions.add(mostRecentTaskRevision);
         }
         return actualTaskRevisions;
+    }
+
+    private void fillProjectStatsWithRemainingTaskStatuses(ProjectStats projectStats) {
+        List<TaskStatus> taskStatusesInStats = Arrays.stream(TaskStatus.values())
+                .filter(TaskStatus::isInStats)
+                .collect(Collectors.toList());
+
+        List<TaskStatus> taskStatusesFromGeneratedStats = projectStats.getFinishedTaskStatuses().stream()
+                .map(FinishedTaskStatus::getTaskStatus)
+                .collect(Collectors.toList());
+        int daysNumber = projectStats.getDays().size();
+        List<Integer> zeros = new ArrayList<>(Collections.nCopies(daysNumber, 0));
+
+        for (TaskStatus taskStatus : taskStatusesInStats) {
+            if (!taskStatusesFromGeneratedStats.contains(taskStatus)) {
+                FinishedTaskStatus finishedTaskStatus = new FinishedTaskStatus();
+                finishedTaskStatus.setTaskStatus(taskStatus);
+                finishedTaskStatus.setFinishedTaskStatus(zeros);
+                projectStats.getFinishedTaskStatuses().add(finishedTaskStatus);
+            }
+        }
     }
 
     private static TaskRevision mapToTaskRevision(Object[] o) {

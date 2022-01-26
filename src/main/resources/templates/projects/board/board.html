@@ -50,16 +50,24 @@
                 <h2>Tablica projektu</h2>
             </div>
 
-            <a th:href="@{/projects/tasks (projectId=${project.ID})}">
-                <button type="button" class="btn btn-primary" style="float: right">
-                    Szczegóły projektu
-                </button>
-            </a>
+            <div style="float: right">
+                <a th:href="@{/projects/stats (projectId=${project.ID})}">
+                    <button type="button" class="btn btn-primary">
+                        Statystyki
+                    </button>
+                </a>
+                <a th:href="@{/projects/tasks (projectId=${project.ID})}">
+                    <button type="button" class="btn btn-primary">
+                        Szczegóły
+                    </button>
+                </a>
+            </div>
         </div>
     </div>
 
     <div class="row" style="padding-top: 20px">
-        <div class="col draggable-column-elements" th:each="taskStatus : ${T(com.project.model.TaskStatus).values()}"
+        <div class="col draggable-column-elements"
+             th:each="taskStatus : ${T(com.project.model.TaskStatus).values()}"
              th:id="'column-' + ${taskStatus}"
              style="border: 2px solid #B0B0B0; border-radius: 10px; padding: 25px 10px; margin: 0 8px 30px 8px">
             <h5 class="no-draggable-element" th:text="${taskStatus.friendlyName}" style="text-align: center;"></h5>

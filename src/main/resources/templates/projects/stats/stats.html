@@ -2,7 +2,7 @@
 <html lang="pl" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Zadania w projekcie</title>
+    <title>Statystyki projektu</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -10,6 +10,7 @@
           href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/css/bootstrap-select.min.css"
           integrity="sha512-ARJR74swou2y0Q2V9k0GbzQ/5vJ2RBSoCWokg4zkfM29Fb3vZEQyv0iWBMW/yvKgyHSR/7D64pFMmU8nYmbRkg=="
           crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.css" rel="stylesheet"/>
     <style>
         body {
             padding-top: 5rem;
@@ -21,7 +22,6 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/chat.css}"/>
 </head>
 <body>
-<script src="https://use.fontawesome.com/df2a6111eb.js"></script>
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
     <a class="navbar-brand" href="#">Zarządzanie projektami</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
@@ -47,129 +47,28 @@
     <div class="row">
         <div class="col">
             <div style="float: left">
-                <h2>Projekt</h2>
+                <h2>Statystyki projektu</h2>
             </div>
 
             <div style="float: right">
-                <a th:href="@{/projects/stats (projectId=${project.ID})}">
-                    <button type="button" class="btn btn-primary">
-                        Statystyki
-                    </button>
-                </a>
                 <a th:href="@{/projects/board (projectId=${project.ID})}">
                     <button type="button" class="btn btn-primary">
                         Tablica
                     </button>
                 </a>
+                <a th:href="@{/projects/tasks (projectId=${project.ID})}">
+                    <button type="button" class="btn btn-primary">
+                        Szczegóły
+                    </button>
+                </a>
             </div>
-
-            <table class="table">
-                <tr>
-                    <th>ID projektu</th>
-                    <td th:text="${project.ID}"></td>
-                </tr>
-                <tr>
-                    <th>Nazwa projektu</th>
-                    <td th:text="${project.name}"></td>
-                </tr>
-                <tr>
-                    <th>Opis projektu</th>
-                    <td th:text="${project.description}"></td>
-                </tr>
-                <tr>
-                    <th>Studenci</th>
-                    <td>
-                        <p th:each="student: ${project.students}"
-                           th:text="|${student.lastName} ${student.firstName} (${student.indexNumber})|"
-                           style="margin-bottom: 0"></p>
-                    </td>
-                </tr>
-            </table>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col">
-            <h2>
-                Lista zadań
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNewModal"
-                        style="float: right">
-                    Dodaj nowe zadanie
-                </button>
-            </h2>
-            <br/>
-            <table class="table" id="mainTable">
-                <thead>
-                <tr>
-                    <th>Lp.</th>
-                    <th>ID</th>
-                    <th>Nazwa</th>
-                    <th>Opis</th>
-                    <th>Utworzony</th>
-                    <th>Status</th>
-                    <th class="actions_column">Akcje</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="task : ${tasks}">
-                    <td th:text="${taskStat.index + 1} + '.'"></td>
-                    <td th:text="${task.ID}"></td>
-                    <td th:text="${task.name}"></td>
-                    <td th:text="${task.description}"></td>
-                    <td th:text="${#temporals.format(task.additionDateTime, 'yyyy-MM-dd hh:mm:ss')}"></td>
-                    <th><span th:class="|badge badge-${task.taskStatus.getBadgeClass()}|"
-                              th:text="${task.taskStatus.getFriendlyName()}"></span></th>
-                    <td>
-                        <a th:href="@{/projects/tasks/edit (taskId=${task.ID}, projectId=${project.ID})}">Edycja</a><br/>
-                        <a th:href="@{/projects/tasks/delete (taskId=${task.ID}, projectId=${project.ID})}">Usuń</a>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
+    <div style="padding-top: 20px">
+        <canvas id="statsChart"></canvas>
     </div>
 </main>
-<div class="modal fade" id="addNewModal" tabindex="-1" role="dialog" aria-labelledby="addNewLabel"
-     aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addNewLabel">Nowe zadanie</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form th:action="@{/projects/tasks}" method="post">
-                <input type="hidden" name="projectId" th:value="${project.ID}"/>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="taskTitle">Nazwa</label>
-                        <input type="text" class="form-control" id="taskTitle" name="taskTitle"
-                               placeholder="Nazwa" maxlength="35" required/>
-                    </div>
-                    <div class="form-group">
-                        <label for="taskDescription">Opis</label>
-                        <textarea maxlength="1000" class="form-control" id="taskDescription" name="taskDescription"
-                                  placeholder="Opis..." required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="taskStatus">Status</label>
-                        <select class="selectpicker form-control" id="taskStatus" name="taskStatus">
-                            <option th:each="status : ${T(com.project.model.TaskStatus).values()}"
-                                    th:value="${status}"
-                                    th:data-content="'<span class=\'badge badge-' + ${status.getBadgeClass()} + '\'>' + ${status.getFriendlyName()} + '</span>'"
-                                    th:text="${status.getFriendlyName()}"></option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
-                    <button type="submit" class="btn btn-primary">Zapisz</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 <div id="Smallchat">
     <div class="Layout Layout-open Layout-expand Layout-right"
          style="background-color: #3F51B5;color: rgb(255, 255, 255);opacity: 5;border-radius: 10px;">
@@ -203,11 +102,9 @@
     </div>
     <div class="chat_on"><span class="chat_on_icon"><i class="fa fa-comments" aria-hidden="true"></i></span></div>
 </div>
+<script src="https://use.fontawesome.com/df2a6111eb.js"></script>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-        crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
         crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
@@ -226,7 +123,18 @@
         th:src="@{/scripts/datatables.js}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.7/dayjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/google-palette/1.1.0/palette.min.js"></script>
 <script type="application/javascript"
         th:src="@{/scripts/chat.js}"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var stats = [[${stats}]];
+    /*]]>*/
+</script>
+<script type="application/javascript"
+        th:src="@{/scripts/stats.js}"></script>
+
 </body>
 </html>
