@@ -33,6 +33,13 @@ public class StudentsFrontendController {
         return "students/list";
     }
 
+    @PostMapping("")
+    public String postList(@RequestParam String firstName, @RequestParam String lastName, @RequestParam String indexNo, @RequestParam Boolean fullTime) {
+        Student student = new Student(0L, lastName, firstName, indexNo, fullTime, null);
+        studentsService.create(student);
+        return "redirect:/students";
+    }
+
     @GetMapping("/projects")
     public String getProjects(@RequestParam Long studentId, Model model) {
         if (!studentsService.existsById(studentId)) return "redirect:/students";

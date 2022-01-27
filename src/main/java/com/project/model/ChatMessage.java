@@ -36,14 +36,7 @@ public class ChatMessage extends RepresentationModel<ChatMessage> {
     @JsonIgnoreProperties({"tasks", "students", "description", "name", "creationDateTime", "deliveryDate", "links"})
     private Project project;
 
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnoreProperties({
-            "username", "password", "email", "enabled", "id", "authorities", "accountNonLocked",
-            "credentialsNonExpired", "accountNonExpired", "links", "projects"
-    })
-    private User user;
+    private String user;
 
     public ChatMessage(@NotNull @Size(min = 1, max = 1000) String message, @NotNull LocalDateTime localDateTime) {
         this.message = message;

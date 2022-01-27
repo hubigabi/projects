@@ -32,10 +32,6 @@ public class ChatMessagesService {
         return chatMessagesRepository.findAllByProject_IDOrderByLocalDateTimeDesc(projectID);
     }
 
-    public List<ChatMessage> findAllByUserID(Long userID) {
-        return chatMessagesRepository.findAllByUser_IDOrderByLocalDateTimeDesc(userID);
-    }
-
     public ChatMessage create(ChatMessage chatMessage) {
         return chatMessagesRepository.save(chatMessage);
     }

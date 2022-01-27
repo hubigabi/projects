@@ -2,7 +2,6 @@ package com.project.controllers.api;
 
 import com.project.model.ChatMessage;
 import com.project.model.Project;
-import com.project.model.Student;
 import com.project.services.ChatMessagesService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -89,27 +88,6 @@ public class ChatMessagesControllerTest {
         when(chatMessagesService.findAllByProjectID(projectID)).thenReturn(chatMessages);
 
         ResponseEntity<CollectionModel<ChatMessage>> responseEntity = chatMessagesController.findAllByProjectID(project.getID());
-
-        assertNotNull(responseEntity.getBody());
-        Collection<ChatMessage> chatMessageCollection = responseEntity.getBody().getContent();
-        assertNotNull(chatMessageCollection);
-        assertAll(() -> assertThat(chatMessageCollection, hasSize(2)),
-                () -> assertThat(chatMessageCollection).hasSameElementsAs(chatMessages));
-    }
-
-    @Test
-    void findAllByUserIDShouldReturnChatMessages() {
-        long userID = 1L;
-        Student student = new Student("anna_nowak", "password98", "Nowak", "Anna", "annanowak@example.com", "120947", false);
-        student.setID(userID);
-        ChatMessage chatMessage1 = new ChatMessage("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", LocalDateTime.now().minusDays(2));
-        chatMessage1.setUser(student);
-        ChatMessage chatMessage2 = new ChatMessage("Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", LocalDateTime.now().minusHours(7));
-        chatMessage2.setUser(student);
-        List<ChatMessage> chatMessages = Arrays.asList(chatMessage1, chatMessage2);
-        when(chatMessagesService.findAllByUserID(userID)).thenReturn(chatMessages);
-
-        ResponseEntity<CollectionModel<ChatMessage>> responseEntity = chatMessagesController.findAllByUserID(student.getID());
 
         assertNotNull(responseEntity.getBody());
         Collection<ChatMessage> chatMessageCollection = responseEntity.getBody().getContent();

@@ -21,11 +21,7 @@ $(document).ready(function () {
             var message = JSON.parse(payload.body);
             if (message.project.id != parseInt(params.get("projectId"))) return;
 
-            var sender;
-            if (message.user.userRole == "LECTURER")
-                sender = `${message.user.academicTitle} ${message.user.lastName} ${message.user.firstName}`;
-            else
-                sender = `${message.user.lastName} ${message.user.firstName} (${message.user.indexNumber})`;
+            var sender = `${message.user}`;
 
             var contents = message.message.replaceAll("\n", "<br />");
             var date = new Date(message.localDateTime).toLocaleString("pl")

@@ -3,9 +3,7 @@ package com.project.controllers.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.model.ChatMessage;
 import com.project.model.Project;
-import com.project.model.Student;
 import com.project.services.ChatMessagesService;
-import com.project.services.UsersService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,9 +41,6 @@ class ChatMessagesControllerTestIT {
 
     @MockBean
     private ChatMessagesService chatMessagesService;
-
-    @MockBean
-    private UsersService usersService;
 
     @Test
     void findAllChatMessagesShouldReturnChatMessages() throws Exception {
@@ -102,26 +97,6 @@ class ChatMessagesControllerTestIT {
         Mockito.when(chatMessagesService.findAllByProjectID(projectID)).thenReturn(chatMessages);
 
         mockMvc.perform(get(CHAT_MESSAGE_API_URL + "/allByProject/{projectID}", projectID)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.chatMessageList", hasSize(chatMessages.size())));
-    }
-
-    @Test
-    void findAllByUserIDShouldReturnChatMessages() throws Exception {
-        long userID = 1L;
-        Student student = new Student("anna_nowak", "password98", "Nowak", "Anna", "annanowak@example.com", "120947", false);
-        student.setID(userID);
-
-        ChatMessage chatMessage1 = new ChatMessage("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", LocalDateTime.now().minusDays(2));
-        chatMessage1.setUser(student);
-        ChatMessage chatMessage2 = new ChatMessage("Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", LocalDateTime.now().minusHours(7));
-        chatMessage2.setUser(student);
-        List<ChatMessage> chatMessages = Arrays.asList(chatMessage1, chatMessage2);
-
-        Mockito.when(chatMessagesService.findAllByUserID(userID)).thenReturn(chatMessages);
-
-        mockMvc.perform(get(CHAT_MESSAGE_API_URL + "/allByUser/{userID}", userID)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.chatMessageList", hasSize(chatMessages.size())));

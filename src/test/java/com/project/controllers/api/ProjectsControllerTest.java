@@ -77,7 +77,7 @@ public class ProjectsControllerTest {
         Project p1 = new Project("Project 1", "Description for project 1", LocalDate.now().plusDays(15));
         Project p2 = new Project("Project 2", "Description for project 2", LocalDate.now().plusDays(20));
         List<Project> projects = Arrays.asList(p1, p2);
-        Student student = new Student(1L, "anna_nowak", "password98", "Nowak", "Anna", "annanowak@example.com", "120947", false);
+        Student student = new Student(1L, "Nowak", "Anna", "120947", false, null);
         student.setProjects(new HashSet<>(projects));
         when(projectsService.findAllByStudents_ID(student.getID())).thenReturn(projects);
 

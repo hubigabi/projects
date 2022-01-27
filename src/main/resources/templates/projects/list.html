@@ -43,7 +43,7 @@
             <h2>
                 Lista projektów
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNewModal"
-                        style="float: right" sec:authorize="${hasAuthority('ADMIN')}">
+                        style="float: right" sec:authorize="${hasAnyRole('lecturers', 'ROLE_lecturers')}">
                     Dodaj nowy projekt
                 </button>
             </h2>
@@ -69,13 +69,11 @@
                     <td th:text="${#temporals.format(project.creationDateTime, 'yyyy-MM-dd hh:mm:ss')}"></td>
                     <td th:text="${#temporals.format(project.deliveryDate, 'yyyy-MM-dd')}"></td>
                     <td>
-                        <span sec:authorize="${hasAuthority('ADMIN')}"><a
-                                th:href="@{/projects/edit (projectId=${project.ID})}">Edycja</a><br/></span>
+                        <span sec:authorize="${hasAnyRole('lecturers', 'ROLE_lecturers')}"><a th:href="@{/projects/edit (projectId=${project.ID})}">Edycja</a><br/></span>
                         <a th:href="@{/projects/tasks (projectId=${project.ID})}">Zadania</a><br/>
                         <a th:href="@{/projects/board (projectId=${project.ID})}">Tablica</a><br/>
                         <a th:href="@{/projects/stats (projectId=${project.ID})}">Statystyki</a><br/>
-                        <span sec:authorize="${hasAuthority('ADMIN')}"><br/>
-                        <a th:href="@{/projects/delete (projectId=${project.ID})}">Usuń</a></span>
+                        <span sec:authorize="${hasAnyRole('lecturers', 'ROLE_lecturers')}"><a th:href="@{/projects/delete (projectId=${project.ID})}">Usuń</a></span>
                     </td>
                 </tr>
                 </tbody>

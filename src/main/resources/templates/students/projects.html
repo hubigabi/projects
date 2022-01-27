@@ -82,7 +82,7 @@
                     <th>Opis</th>
                     <th>Utworzony</th>
                     <th>Data obrony</th>
-                    <th sec:authorize="${hasAuthority('ADMIN')}" class="actions_column">Akcje</th>
+                    <th sec:authorize="${hasAnyRole('lecturers', 'ROLE_lecturers')}" class="actions_column">Akcje</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -93,7 +93,7 @@
                     <td th:text="${project.description}"></td>
                     <td th:text="${#temporals.format(project.creationDateTime, 'yyyy-MM-dd hh:mm:ss')}"></td>
                     <td th:text="${#temporals.format(project.deliveryDate, 'yyyy-MM-dd')}"></td>
-                    <td sec:authorize="${hasAuthority('ADMIN')}">
+                    <td sec:authorize="${hasAnyRole('lecturers', 'ROLE_lecturers')}">
                         <form th:action="@{/students/projects}" method="post">
                             <input type="hidden" name="action" value="remove"/>
                             <input type="hidden" name="studentId" th:value="${student.ID}" />

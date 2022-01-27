@@ -53,18 +53,8 @@ public class ChatMessagesController {
         return ResponseEntity.ok(CollectionModel.of(allByProjectID, link));
     }
 
-    @GetMapping("/allByUser/{userID}")
-    public ResponseEntity<CollectionModel<ChatMessage>> findAllByUserID(@PathVariable("userID") long userID) {
-        List<ChatMessage> allByUserID = chatMessagesService.findAllByUserID(userID);
-        allByUserID.forEach(chatMessage -> chatMessage.addIf(!chatMessage.hasLinks(),
-                () -> getLinkToChatMessage(chatMessage)));
-        Link link = linkTo(ChatMessagesController.class).withSelfRel();
-        return ResponseEntity.ok(CollectionModel.of(allByUserID, link));
-    }
-
     private Link getLinkToChatMessage(ChatMessage chatMessage) {
         addLinkToProject(chatMessage);
-        addLinkToUser(chatMessage);
         return linkTo(ChatMessagesController.class).slash(chatMessage.getID()).withSelfRel();
     }
 
@@ -72,13 +62,6 @@ public class ChatMessagesController {
         if (chatMessage.getProject() != null) {
             chatMessage.getProject().addIf(!chatMessage.getProject().hasLinks(),
                     () -> linkTo(ProjectsController.class).slash(chatMessage.getProject().getID()).withSelfRel());
-        }
-    }
-
-    private void addLinkToUser(ChatMessage chatMessage) {
-        if (chatMessage.getUser() != null) {
-            chatMessage.getUser().addIf(!chatMessage.getUser().hasLinks(),
-                    () -> linkTo(UsersController.class).slash(chatMessage.getUser().getID()).withSelfRel());
         }
     }
 }

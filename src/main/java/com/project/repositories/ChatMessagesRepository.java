@@ -8,9 +8,5 @@ import java.util.List;
 
 @Repository
 public interface ChatMessagesRepository extends JpaRepository<ChatMessage, Long> {
-
     List<ChatMessage> findAllByProject_IDOrderByLocalDateTimeDesc(Long id);
-
-    List<ChatMessage> findAllByUser_IDOrderByLocalDateTimeDesc(Long id);
-
 }

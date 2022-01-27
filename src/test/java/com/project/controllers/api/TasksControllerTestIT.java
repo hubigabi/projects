@@ -5,7 +5,6 @@ import com.project.model.Project;
 import com.project.model.Task;
 import com.project.model.TaskStatus;
 import com.project.services.TasksService;
-import com.project.services.UsersService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -43,9 +42,6 @@ class TasksControllerTestIT {
 
     @MockBean
     private TasksService tasksService;
-
-    @MockBean
-    private UsersService usersService;
 
     @Test
     void findByIdShouldReturnTask() throws Exception {

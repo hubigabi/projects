@@ -35,8 +35,8 @@ public class StudentsControllerTest {
 
     @Test
     void findAllStudentsShouldReturnStudents() {
-        Student student1 = new Student(1L, "jkowalski", "password123", "Kowalski", "Jan", "jankowalski@example.com", "92318", true);
-        Student student2 = new Student(2L, "anna_nowak", "password98", "Nowak", "Anna", "annanowak@example.com", "120947", false);
+        Student student1 = new Student(1L, "Kowalski", "Jan", "92318", true, null);
+        Student student2 = new Student(2L, "Nowak", "Anna", "120947", false, null);
         List<Student> students = Arrays.asList(student1, student2);
         when(studentsService.findAll()).thenReturn(students);
 
@@ -53,7 +53,7 @@ public class StudentsControllerTest {
     @Test
     void findByIdShouldReturnStudent() {
         long studentID = 1L;
-        Student student = new Student("jkowalski", "password123", "Kowalski", "Jan", "jankowalski@example.com", "92318", true);
+        Student student = new Student(0L, "Kowalski", "Jan", "92318", true, null);
         student.setID(studentID);
         when(studentsService.findById(studentID)).thenReturn(Optional.of(student));
 
@@ -76,7 +76,7 @@ public class StudentsControllerTest {
     @Test
     void createShouldReturnStudent() {
         long studentID = 1L;
-        Student student = new Student("jkowalski", "password123", "Kowalski", "Jan", "jankowalski@example.com", "92318", true);
+        Student student = new Student(0L, "Kowalski", "Jan", "92318", true, null);
         student.setID(studentID);
         when(studentsService.create(any(Student.class))).thenReturn(student);
 
@@ -89,7 +89,7 @@ public class StudentsControllerTest {
     @Test
     void updateShouldReturnStudent() {
         long studentID = 1L;
-        Student student = new Student("jkowalski", "password123", "Kowalski", "Jan", "jankowalski@example.com", "92318", true);
+        Student student = new Student(0L, "Kowalski", "Jan", "92318", true, null);
         student.setID(studentID);
         when(studentsService.update(any(Student.class))).thenReturn(student);
 
