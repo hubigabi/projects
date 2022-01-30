@@ -2,7 +2,7 @@
 <html lang="pl" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Zadania w projekcie</title>
+    <title>Pliki w projekcie</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -61,9 +61,9 @@
                         Tablica
                     </button>
                 </a>
-                <a th:href="@{/projects/files (projectId=${project.ID})}">
+                <a th:href="@{/projects/tasks (projectId=${project.ID})}">
                     <button type="button" class="btn btn-primary">
-                        Pliki
+                        Szczegóły
                     </button>
                 </a>
             </div>
@@ -96,10 +96,10 @@
     <div class="row">
         <div class="col">
             <h2>
-                Lista zadań
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNewModal"
+                Lista plików
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addFileModal"
                         style="float: right">
-                    Dodaj nowe zadanie
+                    Dodaj nowy plik
                 </button>
             </h2>
             <br/>
@@ -110,23 +110,20 @@
                     <th>ID</th>
                     <th>Nazwa</th>
                     <th>Opis</th>
-                    <th>Utworzony</th>
-                    <th>Status</th>
+                    <th>Data dodania</th>
                     <th class="actions_column">Akcje</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="task : ${tasks}">
-                    <td th:text="${taskStat.index + 1} + '.'"></td>
-                    <td th:text="${task.ID}"></td>
-                    <td th:text="${task.name}"></td>
-                    <td th:text="${task.description}"></td>
-                    <td th:text="${#temporals.format(task.additionDateTime, 'yyyy-MM-dd hh:mm:ss')}"></td>
-                    <th><span th:class="|badge badge-${task.taskStatus.getBadgeClass()}|"
-                              th:text="${task.taskStatus.getFriendlyName()}"></span></th>
+                <tr th:each="attachment : ${attachments}">
+                    <td th:text="${attachmentStat.index + 1} + '.'"></td>
+                    <td th:text="${attachment.ID}"></td>
+                    <td th:text="${attachment.name}"></td>
+                    <td th:text="${attachment.description}"></td>
+                    <td th:text="${#temporals.format(attachment.additionDateTime, 'yyyy-MM-dd hh:mm:ss')}"></td>
                     <td>
-                        <a th:href="@{/projects/tasks/edit (taskId=${task.ID}, projectId=${project.ID})}">Edycja</a><br/>
-                        <a th:href="@{/projects/tasks/delete (taskId=${task.ID}, projectId=${project.ID})}">Usuń</a>
+                        <a th:href="@{/projects/files/download (attachmentId=${attachment.ID})}" th:download="${attachment.name}">Pobierz</a><br/>
+                        <a th:href="@{/projects/files/delete (attachmentId=${attachment.ID}, projectId=${project.ID})}">Usuń</a>
                     </td>
                 </tr>
                 </tbody>
@@ -134,42 +131,35 @@
         </div>
     </div>
 </main>
-<div class="modal fade" id="addNewModal" tabindex="-1" role="dialog" aria-labelledby="addNewLabel"
+<div class="modal fade" id="addFileModal" tabindex="-1" role="dialog" aria-labelledby="addFileLabel"
      aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addNewLabel">Nowe zadanie</h5>
+                <h5 class="modal-title" id="addFileLabel">Dodaj plik</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form th:action="@{/projects/tasks}" method="post">
+            <form th:action="@{/projects/files/upload}" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="projectId" th:value="${project.ID}"/>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="taskTitle">Nazwa</label>
-                        <input type="text" class="form-control" id="taskTitle" name="taskTitle"
-                               placeholder="Nazwa" maxlength="35" required/>
-                    </div>
-                    <div class="form-group">
-                        <label for="taskDescription">Opis</label>
-                        <textarea maxlength="1000" class="form-control" id="taskDescription" name="taskDescription"
+                        <label for="fileDescription">Opis</label>
+                        <textarea maxlength="1000" class="form-control" id="fileDescription" name="description"
                                   placeholder="Opis..." required></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="taskStatus">Status</label>
-                        <select class="selectpicker form-control" id="taskStatus" name="taskStatus">
-                            <option th:each="status : ${T(com.project.model.TaskStatus).values()}"
-                                    th:value="${status}"
-                                    th:data-content="'<span class=\'badge badge-' + ${status.getBadgeClass()} + '\'>' + ${status.getFriendlyName()} + '</span>'"
-                                    th:text="${status.getFriendlyName()}"></option>
-                        </select>
+                        <label for="fileItself">Plik</label>
+                        <div class="custom-file" id="fileItself">
+                            <input type="file" class="custom-file-input" id="customFile" name="file">
+                            <label class="custom-file-label" for="customFile">Wybierz plik</label>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
-                    <button type="submit" class="btn btn-primary">Zapisz</button>
+                    <button type="submit" class="btn btn-primary">Załaduj</button>
                 </div>
             </form>
         </div>

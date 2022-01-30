@@ -142,3 +142,5 @@ target/
 
 *.mv.db
 *.trace.db
+
+attachments/
