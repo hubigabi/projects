@@ -42,6 +42,10 @@ public class Project extends RepresentationModel<Project> {
     @JsonIgnoreProperties({"project"})
     private List<Task> tasks;
 
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"project"})
+    private List<Attachment> attachments;
+
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Student> students;
 

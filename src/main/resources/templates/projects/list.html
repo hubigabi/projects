@@ -71,6 +71,7 @@
                     <td>
                         <span sec:authorize="${hasAnyRole('lecturers', 'ROLE_lecturers')}"><a th:href="@{/projects/edit (projectId=${project.ID})}">Edycja</a><br/></span>
                         <a th:href="@{/projects/tasks (projectId=${project.ID})}">Zadania</a><br/>
+                        <a th:href="@{/projects/files (projectId=${project.ID})}">Pliki</a><br/>
                         <a th:href="@{/projects/board (projectId=${project.ID})}">Tablica</a><br/>
                         <a th:href="@{/projects/stats (projectId=${project.ID})}">Statystyki</a><br/>
                         <span sec:authorize="${hasAnyRole('lecturers', 'ROLE_lecturers')}"><a th:href="@{/projects/delete (projectId=${project.ID})}">Usuń</a></span>

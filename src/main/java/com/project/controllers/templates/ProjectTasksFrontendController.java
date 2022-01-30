@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("/projects/tasks")
 public class ProjectTasksFrontendController {
-    private ProjectsService projectsService;
-    private TasksService tasksService;
+    private final ProjectsService projectsService;
+    private final TasksService tasksService;
 
     @Autowired public ProjectTasksFrontendController(ProjectsService projectsService, TasksService tasksService) {
         this.projectsService = projectsService;
